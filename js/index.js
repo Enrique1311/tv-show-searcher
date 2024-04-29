@@ -1,6 +1,6 @@
 const d = document,
 	$shows = d.getElementById("shows"),
-	$template = d.getElementById("show-template").contentEditable,
+	$template = d.getElementById("show-template").content,
 	$fragment = d.createDocumentFragment();
 
 d.addEventListener("keypress", async (e) => {
@@ -23,6 +23,32 @@ d.addEventListener("keypress", async (e) => {
 				if (json.length === 0) {
 					$shows.innerHTML = `<h2>No results...</h2>`;
 				} else {
+					$shows.innerHTML = "";
+					json.forEach((el) => {
+						$template.querySelector(".show-description h3").textContent =
+							el.show.name;
+						$template.querySelector("img").src = el.show.image.medium
+							? el.show.image.medium
+							: "../assets/without-image.jpg";
+
+						$template.querySelector(".show-description div").innerHTML = el.show
+							.summary
+							? el.show.summary
+							: "Without Decription...";
+						$template.querySelector("a").href = el.show.url ? el.show.url : "#";
+						$template.querySelector("a").target = el.show.url
+							? "_blank"
+							: "_self";
+						$template.querySelector("a").textContent = el.show.url
+							? "Show more..."
+							: "";
+
+						let $clone = d.importNode($template, true);
+						$fragment.appendChild($clone);
+					});
+
+					$shows.innerHTML = "";
+					$shows.appendChild($fragment);
 				}
 			} catch (error) {
 				let message = error.statusText || "An error occurred!";
